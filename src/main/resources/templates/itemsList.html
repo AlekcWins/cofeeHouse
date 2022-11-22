@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+
+<head>
+    <title>Good Thymes Virtual Grocery</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+</head>
+
+<body>
+
+<div th:switch="${items}">
+    <h2 th:case="null">No items yet!</h2>
+    <div >
+        <h2>Items</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>Name</th>
+                <th>capacity</th>
+                <th>cost</th>
+                <th>pathImg</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${items}">
+                <td th:text="${item.id}"></td>
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.capacity}"></td>
+                <td th:text="${item.cost}"></td>
+                <td th:text="${item.pathImg}"></td>
+                <td><a th:href="@{/edit/{id}(id=${item.id})}">Edit</a></td>
+                <td><a th:href="@{/delete/{id}(id=${item.id})}">Delete</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+
+</html>
