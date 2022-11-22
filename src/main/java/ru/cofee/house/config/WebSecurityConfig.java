@@ -21,7 +21,12 @@ import static ru.cofee.house.controller.api.ItemController.API_PATH;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] AUTH_WHITELIST = {
-            "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/register/**",
+            "/static/**",
+            "/index",
 //            todo
             "/" + API_PATH + "/**"
     };
@@ -41,6 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
+                .antMatchers("/users").hasRole("USER")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin(

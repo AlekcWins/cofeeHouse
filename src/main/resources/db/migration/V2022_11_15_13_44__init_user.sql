@@ -1,8 +1,7 @@
 create table user_role
 (
     user_id INT          NOT NULL,
-    role    VARCHAR(255) NOT NULL,
-    UNIQUE (role)
+    role    VARCHAR(255) NOT NULL
 );
 
 create table users

@@ -53,10 +53,12 @@ public class AuthController {
                                Model model) {
         Optional<User> existingUser = userService.findUserByUsername(userDto.getUsername());
 
-        if (!existingUser.isEmpty()) {
-            //todo replace eng name
-            result.rejectValue("username", null,
-                    "There is already an account registered with the same email");
+        if (existingUser.isPresent()) {
+            result.rejectValue("username", "alreadyRegistered",
+                    "Такой пользователь уже зарегистирован");
+            result.rejectValue("username", "test",
+                    "ttest");
+
         }
 
         if (result.hasErrors()) {

@@ -9,6 +9,8 @@
           rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
+
+    <link th:href="@{/static/auth/auth.css}" rel="stylesheet"/>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -22,89 +24,116 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/login}">Login</a>
-                </li>
             </ul>
+            </li>
         </div>
     </div>
 </nav>
 <br/><br/><br/>
+
 <div class="container">
     <div class="row col-md-8 offset-md-2">
         <div class="card">
-            <div class="card-header">
-                <h2 class="text-center">Registration</h2>
-            </div>
-            <div th:if="${param.success}">
-                <div class="alert alert-info">
-                    You have successfully registered our app!
-                </div>
-            </div>
             <div class="card-body">
+                <h2 class="text-center">Регистрация</h2>
                 <form
+                        th:class="${param.success==null} ? 'was-validated'"
+                        novalidate
                         method="post"
                         role="form"
                         th:action="@{/register/save}"
-                        th:object="${user}"
-                >
-                    <div class="form-group mb-3">
-                        <label class="form-label">First Name</label>
+                        th:object="${user}">
+
+                    <div class="mb-3">
+                        <label class="form-label" for="firstName">Имя</label>
                         <input
                                 class="form-control"
                                 id="firstName"
                                 name="firstName"
-                                placeholder="Enter first name"
+                                placeholder="введите имя"
                                 th:field="*{firstName}"
                                 type="text"
+                                required
                         />
-                        <p th:errors="*{firstName}" class="text-danger"
-                           th:if="${#fields.hasErrors('firstName')}"></p>
+                        <div class="invalid-feedback">
+                            Не валидно!
+                        </div>
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label class="form-label">Last Name</label>
+                    <div class="mb-3">
+                        <label class="form-label" for="lastName">Фамилия</label>
                         <input
                                 class="form-control"
                                 id="lastName"
                                 name="lastName"
-                                placeholder="Enter last name"
+                                placeholder="введите фамилию"
                                 th:field="*{lastName}"
                                 type="text"
+                                required
                         />
-                        <p th:errors="*{lastName}" class="text-danger"
-                           th:if="${#fields.hasErrors('lastName')}"></p>
+                        <div class="invalid-feedback">
+                            Не валидно!
+                        </div>
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label class="form-label">Username</label>
+                    <div class="mb-3">
+
+                        <label class="form-label" for="username">Логин</label>
                         <input
                                 class="form-control"
                                 id="username"
                                 name="username"
-                                placeholder="Enter username"
+                                placeholder="введите логин"
                                 th:field="*{username}"
-                                type="text"
+                                required
                         />
-                        <p th:errors="*{username}" class="text-danger"
-                           th:if="${#fields.hasErrors('username')}"></p>
+                        <div class="invalid-feedback">
+                            Не валидно!
+                        </div>
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label class="form-label">Password</label>
+
+                    <div class="mb-3">
+
+                        <label class="form-label" for="password">Пароль</label>
                         <input
                                 class="form-control"
                                 id="password"
                                 name="password"
-                                placeholder="Enter password"
+                                placeholder="введите пароль"
                                 th:field="*{password}"
                                 type="password"
+                                required
                         />
-                        <p th:errors="*{password}" class="text-danger"
-                           th:if="${#fields.hasErrors('password')}"></p>
+                        <div class="invalid-feedback">
+                            Не валидно!
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <button class="btn btn-primary" type="submit">Register</button>
-                        <span>Already registered? <a th:href="@{/login}">Login here</a></span>
+
+
+                    <button class="w-100 btn btn-lg btn-primary ml-2 mr-2" type="submit">Зарегистрироваться</button>
+
+                    <div th:if="${param.success}" class="text-center mt-3">
+                        <div class="alert alert-info text-center"
+                             style="padding-left: 30px;padding-top: 30px;padding-bottom: 30px;">
+                            Регистрация прошла успешно
+                        </div>
                     </div>
+
+                    <div th:each="err : ${#fields.detailedErrors('username')}"
+                         class="text-center mt-3">
+                        <div class="alert alert-danger text-center"
+                             th:if="${err.getCode() == 'alreadyRegistered'}"
+                             style="padding-left: 30px;padding-top: 30px;padding-bottom: 30px;">
+                            Такой пользователь зарегистирован
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-3 text-center">
+                        <span>уже есть аккаунт <a th:href="@{/login}">Войти</a></span>
+                    </div>
+
+                    <p class="mt-3 text-muted text-center">&copy; 2022</p>
                 </form>
             </div>
         </div>
