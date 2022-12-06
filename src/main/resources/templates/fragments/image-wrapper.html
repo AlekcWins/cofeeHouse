@@ -1,0 +1,6 @@
+<div class="wrap" th:fragment="img (imgPath)">
+    <img class="cup d-block"
+         th:src="@{/static/images/white-cup.png}"
+         alt="">
+    <img class="liqud d-block" th:src="@{'/static/images/items/' + ${imgPath}}" alt="">
+</div>

@@ -10,7 +10,6 @@ CREATE table orders
 CREATE table items
 (
     id       SERIAL PRIMARY KEY NOT NULL,
-    status   VARCHAR(255),
     capacity float              NOT NULL,
     cost     float              not NULL,
     name     varchar(255)       NOT NULL,

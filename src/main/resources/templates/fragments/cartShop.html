@@ -1,0 +1,79 @@
+<html lang="ru" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<main th:fragment="cart (items)" class="page">
+    <section class="shopping-cart dark">
+        <div class="container">
+            <div class="block-heading">
+                <h2>Ваш текущий заказ</h2>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12 col-lg-8">
+                        <div class="items">
+                            <div th:each="item : ${items}" class="product">
+                                <div style="align-items: center" class="row ">
+                                    <div class="col-md-4"
+                                         th:insert="fragments/image-wrapper.html:: img(imgPath=${item.item.pathImg})">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="info">
+                                            <div class="row">
+                                                <div class="col-md-5 product-name">
+                                                    <div class="product-name">
+                                                        <a href="#" th:text="${item.item.name}"></a>
+                                                        <div class="product-info">
+                                                            <div>Объем: <span class="value"
+                                                                              th:text="${item.item.capacity}"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 quantity">
+                                                    <label for="quantity">Количество:</label>
+                                                    <input id="quantity" type="number" th:value="${item.count}"
+                                                           class="form-control quantity-input">
+                                                </div>
+                                                <div class="col-md-3 price">
+                                                    <span th:text="${item.item.cost+ ' руб.'}"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-4">
+                        <div class="summary">
+                            <h3>Стоимость</h3>
+                            <div class="summary-item"><span class="text">Общее</span><span class="price">360 руб.</span>
+                            </div>
+                            <div class="summary-item"><span class="text">Скидка</span><span class="price">0 руб.</span>
+                            </div>
+                            <div class="summary-item"><span class="text">Итого</span><span class="price">360 руб.</span>
+                            </div>
+                            <button id="confirm" type="button" class="btn btn-primary btn-lg btn-block"
+                                    style="width:100%;">
+                                Заказать
+                            </button>
+
+                            <script>
+                                const element = document.querySelector("#confirm");
+                                element.addEventListener("click", () => {
+                                    fetch("/order/confirm", {
+                                        method: "post",
+                                    })
+                                        .then(x => {
+                                            window.location.href = '/'
+                                        });
+                                })
+
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</html>

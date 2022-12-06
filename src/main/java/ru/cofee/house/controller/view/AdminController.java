@@ -1,0 +1,62 @@
+package ru.cofee.house.controller.view;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.view.RedirectView;
+import ru.cofee.house.controller.api.ItemController;
+import ru.cofee.house.controller.api.OrderController;
+import ru.cofee.house.core.dto.ItemDto;
+import ru.cofee.house.model.Order;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/admin")
+public class AdminController {
+
+    private final ItemController itemRestController;
+    private final OrderController orderController;
+
+    @Autowired
+    public AdminController(ItemController itemRestController, OrderController orderController) {
+        this.itemRestController = itemRestController;
+        this.orderController = orderController;
+    }
+
+    @GetMapping
+    public RedirectView index() {
+        return new RedirectView("admin/products");
+    }
+
+    @GetMapping("/products")
+    public String products(Model model) {
+        List<ItemDto> items = itemRestController.getItems();
+        model.addAttribute("items", items);
+        return "admin/products";
+    }
+
+
+    @GetMapping("/products/add")
+    public String addProduct(Model model) {
+        return "admin/product/add";
+    }
+
+    @GetMapping("all_work")
+    public String allWork(Model model) {
+        List<Order> items = orderController.getAllForWork();
+        model.addAttribute("items", items);
+        return "admin/order/all_work";
+    }
+
+    @GetMapping("all_complete")
+    public String allComplete(Model model) {
+        List<Order> items = orderController.allComplete();
+        model.addAttribute("items", items);
+        return "admin/order/all_complete";
+    }
+
+
+}

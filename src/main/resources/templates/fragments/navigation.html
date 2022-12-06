@@ -1,0 +1,153 @@
+<!-- Navigation-->
+<nav th:fragment="nav" class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand m-0" href="/">
+            <img src="/assets/img/icons/coffee-icon.png" class="navbar-brand-img " width="32" height="32"
+                 alt="main_logo">
+            <span class="ms-1 font-weight-bold">CoffeeHouse</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation"><span
+                class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">О нас</a></li>
+                <li class="nav-item" id="admin" style="display: none"><a class="nav-link" href="/admin">Панель
+                    администратора</a></li>
+                <!--                <li class="nav-item dropdown">-->
+                <!--                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"-->
+                <!--                       data-bs-toggle="dropdown" aria-expanded="false">Shop</a>-->
+                <!--                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+                <!--                        <li><a class="dropdown-item" href="#!">All Products</a></li>-->
+                <!--                        <li>-->
+                <!--                            <hr class="dropdown-divider"/>-->
+                <!--                        </li>-->
+                <!--                        <li><a class="dropdown-item" href="#!">Popular Items</a></li>-->
+                <!--                        <li><a class="dropdown-item" href="#!">New Arrivals</a></li>-->
+                <!--                    </ul>-->
+                <!--                </li>-->
+            </ul>
+            <div class="d-flex justify-content-between ">
+                <form class="d-flex shop-cart d-none">
+                    <a class="btn btn-outline-dark" href="/items/cart">
+                        <i class="bi-cart-fill me-1"></i>
+                        Cart
+                        <span id="countItemsCart" class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                    </a>
+                </form>
+                <div class=" px-2 d-flex justify-content-between nav__buttons">
+                    <a class="btn btn-outline-secondary logout d-none" th:href="@{/logout}">Выйти</a>
+                    <a class="btn btn-outline-secondary login d-none" th:href="@{/login}">Войти</a>
+                    <a class="btn btn-outline-secondary register d-none ml-1" th:href="@{/register}"
+                       style="margin-left: 5px">Регистрация</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function displayAdminPanel() {
+            document.querySelector('#admin').style.display = 'block';
+        }
+
+        function hideAdminPanel() {
+            document.querySelector('#admin').style.display = 'none';
+        }
+
+        function _updateCartCountItem(count) {
+            document.querySelector("#countItemsCart").textContent = count;
+        }
+
+
+        function whenDocReady() {
+            const url = '/username';
+            fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then((response) => {
+                    if (response.ok)
+                        return response.json()
+                    throw new Error(response.status);
+                })
+                .then((data) => {
+                    console.log('Success:', data);
+                    displayAuthorize();
+                })
+                .catch((error) => {
+                    console.log(error);
+                    displayNoneAuthorize();
+                });
+
+            fetch("/iamisadmin", {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then((response) => {
+                    if (response.ok)
+                        return response.json()
+                    throw new Error(response.status);
+                })
+                .then((data) => {
+                    console.log('Success:', data);
+                    if (data.isAdmin) {
+                        displayAdminPanel();
+                        console.log('YOU ARE ADMIN')
+                    } else {
+                        hideAdminPanel();
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                    hideAdminPanel();
+                });
+
+            fetchCountCartItems()
+        }
+
+        function fetchCountCartItems() {
+            fetch("/order/count", {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then((response) => {
+                    if (response.ok)
+                        return response.text()
+                    throw new Error(response.status);
+                })
+                .then((data) => {
+                    console.log('Success:', data);
+                    _updateCartCountItem(data)
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+
+        function hideAllNavButton() {
+            const navButtons = document.querySelector(".nav__buttons");
+            navButtons.querySelectorAll(".btn").forEach((item) => item.style.setProperty("display", "none", "important"))
+            document.querySelector('.shop-cart').style.setProperty("display", "none", "important");
+        }
+
+        function displayAuthorize() {
+            hideAllNavButton();
+            const navButtons = document.querySelector(".nav__buttons");
+            navButtons.querySelector('.logout').style.setProperty("display", "block", "important");
+            document.querySelector('.shop-cart').style.setProperty("display", "block", "important");
+        }
+
+        function displayNoneAuthorize() {
+            hideAllNavButton();
+            const navButtons = document.querySelector(".nav__buttons");
+            navButtons.querySelector('.login').style.setProperty("display", "block", "important");
+            navButtons.querySelector('.register').style.setProperty("display", "block", "important");
+        }
+
+        document.addEventListener("DOMContentLoaded", whenDocReady);
+    </script>
+</nav>

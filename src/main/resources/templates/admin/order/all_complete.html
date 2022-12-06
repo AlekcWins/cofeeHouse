@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="admin/fragments/header.html:: head"></head>
+
+<body class="g-sidenav-show  bg-gray-200">
+
+<aside th:replace="admin/fragments/sidebar.html:: aside"></aside>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <nav th:replace="admin/fragments/nav.html:: nav"></nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                            <h6 class="text-white text-capitalize ps-3 text-center" style="font-size:30px">Список
+                                завершенных заказов </h6>
+                        </div>
+                    </div>
+                    <div class="card-body px-4 pb-2">
+
+                        <div class="card m-3" th:each="item : ${items}" style="background-color: #f3f3f3">
+                            <div class="card-header bg-gradient-primary shadow-primary border-radius-lg pt-2 pb-1">
+                                <div style="    display: flex;justify-content: space-around;">
+                                    <p class="text-white text-center text-sm font-weight-bold mb-0 text-center"
+                                       th:text="${item.id}"></p>
+                                    <p class="text-white text-center text-sm font-weight-bold mb-0"
+                                       th:text="${item.status}"></p>
+                                    <p class="text-white text-center text-sm font-weight-bold mb-0"
+                                    >
+                                        <span>Заказчик: </span>
+                                        <span th:text="${item.userName}"></span>
+                                    </p>
+
+                                </div>
+                            </div>
+                            <div class="card-body text-center">
+                                <table class="table align-items-center justify-content-center mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder  ps-2">
+                                            Идентификатор
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder  ps-2">
+                                            Наименование
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder  ps-2">
+                                            Объем
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder  ps-2">
+                                            Количество
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="orderItem : ${item.items}">
+                                        <td>
+                                            <p class="text-center text-sm font-weight-bold mb-0"
+                                               th:text="${orderItem.item.id}"></p>
+                                        </td>
+                                        <td>
+                                            <p class="text-center text-sm font-weight-bold mb-0"
+                                               th:text="${orderItem.item.name}"></p>
+                                        </td>
+
+                                        <td>
+                                            <p class="text-center text-sm font-weight-bold mb-0"
+                                               th:text="${orderItem.item.capacity}"></p>
+                                        </td>
+
+                                        <td>
+                                            <p class="text-center text-sm font-weight-bold mb-0"
+                                               th:text="${orderItem.count}"></p>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--   Core JS Files   -->
+<script src="/assets/js/core/popper.min.js"></script>
+<script src="/assets/js/core/bootstrap.min.js"></script>
+<script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+</script>
+<!-- Github buttons -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="/assets/js/material-dashboard.min.js?v=3.0.4"></script>
+</body>
+
+</html>

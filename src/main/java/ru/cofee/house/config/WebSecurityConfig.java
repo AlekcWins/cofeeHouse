@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.servlet.http.Cookie;
+
 import static ru.cofee.house.controller.api.ItemController.API_PATH;
 
 @Configuration
@@ -27,6 +29,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/register/**",
             "/static/**",
             "/index",
+            "/username",
+            "/iamisadmin",
+            "/order/count",
+            "/assets/**",
 //            todo
             "/" + API_PATH + "/**"
     };
@@ -46,18 +52,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-                .antMatchers("/users").hasRole("USER")
+                .antMatchers("/users").hasRole("ADMIN")
+                .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
+                .and()
+                .exceptionHandling().accessDeniedPage("/403")
                 .and()
                 .formLogin(
                         form -> form
                                 .loginPage("/login")
                                 .loginProcessingUrl("/login")
-                                .defaultSuccessUrl("/users")
+                                .defaultSuccessUrl("/items")
                                 .permitAll()
                 ).logout(
                         logout -> logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                .logoutSuccessUrl("/")
+                                .deleteCookies("JSESSIONID")
+                                .clearAuthentication(true)
+                                .invalidateHttpSession(true)
+                                .addLogoutHandler((request, response, auth) -> {
+                                    for (Cookie cookie : request.getCookies()) {
+                                        String cookieName = cookie.getName();
+                                        Cookie cookieToDelete = new Cookie(cookieName, null);
+                                        cookieToDelete.setMaxAge(0);
+                                        cookieToDelete.setPath("/");
+                                        cookieToDelete.setHttpOnly(true);
+                                        response.addCookie(cookieToDelete);
+                                    }
+                                })
                                 .permitAll()
 
                 )

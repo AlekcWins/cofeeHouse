@@ -1,5 +1,6 @@
 package ru.cofee.house.model;
 
 public enum Status {
-    ACCEPTED, PREPARING, READY, ISSUED
+    //черновик, ПРИНЯТ, ГОТОВИТСЯ, ГОТОВ, ВЫПУЩЕН
+    DRAFT, ACCEPTED, PREPARING, READY, ISSUED
 }

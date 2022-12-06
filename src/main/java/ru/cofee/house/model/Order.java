@@ -20,11 +20,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "order_item",
-            joinColumns = @JoinColumn(name = "id_order", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "id_item", referencedColumnName = "id"))
-    private List<Item> items;
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> items;
 
-    //todo add user
+    private String userName;
+
 }

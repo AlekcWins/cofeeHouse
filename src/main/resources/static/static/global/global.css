@@ -1,0 +1,28 @@
+.wrap {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.cup {
+    position: absolute;
+    width: 100%;
+}
+
+.liqud {
+    position: absolute;
+    width: 100%;
+}
+
+
+
+/**header**/
+.header-color-none{
+    background-color: white;
+}
+
+
+/*for padding when footer on bottom body*/
+.empty-padding-for-footer{
+    margin-bottom: 100px;
+}
