@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -50,12 +51,14 @@ public class ItemController {
     public ResponseEntity<ItemDto> createItem(ItemFileDto item) {
         Item mapItem = mapper.map(item, Item.class);
         try {
-            // Save as you want as per requiremens
-            String fileName = saveUploadedFile(item.getImg());
-            mapItem.setPathImg(fileName);
-            Item createItem = itemService.create(mapItem);
+            return saveUploadedFile(item.getImg())
+                    .map(fileName -> {
+                        mapItem.setPathImg(fileName);
+                        Item createItem = itemService.create(mapItem);
+                        return ResponseEntity.ok(mapper.map(createItem, ItemDto.class));
+                    })
+                    .orElse(ResponseEntity.badRequest().build());
 
-            return new ResponseEntity(mapper.map(createItem, ItemDto.class), HttpStatus.OK);
         } catch (IOException e) {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -85,8 +88,7 @@ public class ItemController {
     }
 
 
-    //todo service
-    private String saveUploadedFile(MultipartFile file) throws IOException {
+    private Optional<String> saveUploadedFile(MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
             byte[] bytes = file.getBytes();
             Resource resource = new ClassPathResource("static/static/images/items");
@@ -94,9 +96,8 @@ public class ItemController {
                     + file.getOriginalFilename();
             Path path = Paths.get(resource.getFile().getAbsolutePath(), genFileName);
             Files.write(path, bytes);
-            return genFileName;
+            return Optional.of(genFileName);
         }
-        //todo
-        return "";
+        return Optional.empty();
     }
 }
