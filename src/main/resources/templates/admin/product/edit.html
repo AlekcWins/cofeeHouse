@@ -1,10 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 
+<head th:replace="admin/fragments/header.html:: head"></head>
+
+<body class="g-sidenav-show  bg-gray-200">
+
+<aside th:replace="admin/fragments/sidebar.html:: aside"></aside>
+
+<main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+    <nav th:replace="admin/fragments/nav.html:: nav"></nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-4">
+                    <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                        <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3">
+                            <h6 class="text-white text-capitalize ps-3 text-center" style="font-size:30px">Изменение
+                                товара</h6>
+                        </div>
+                    </div>
+                    <div class="card-body px-4 pb-2">
+                        <form style="display:flex; align-items:center; flex-direction: column"
+                              enctype="multipart/form-data">
+                            <div class="col-md-6">
+                                <div class="input-group input-group-outline my-3 is-filled">
+                                    <label class="form-label">наименование</label>
+                                    <input th:value="${item.name}" name="name" type="text" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="input-group input-group-outline my-3 is-filled">
+                                    <label class="form-label">стоимость</label>
+                                    <input th:value="${item.cost}" name="cost" type="number" class="form-control">
+                                </div>
+                            </div>
+                            <style>
+                                .input_container {
+                                    border: 1px solid #e5e5e5;
+                                }
+
+                                input[type=file]::file-selector-button {
+                                    background-color: #fff;
+                                    color: #000;
+                                    border: 0px;
+                                    border-right: 1px solid #e5e5e5;
+                                    padding: 10px 15px;
+                                    margin-right: 20px;
+                                    transition: .5s;
+                                }
+
+                                input[type=file]::file-selector-button:hover {
+                                    background-color: #eee;
+                                    border: 0px;
+                                    border-right: 1px solid #e5e5e5;
+                                }
+                            </style>
+                            <div class="col-md-6">
+                                <span th:text="${'Прошлый файл :' + item.pathImg}"></span>
+                                <div class="input-group input-group-outline my-3 input_container">
+                                    <input style="" name="img" type="file" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="input-group input-group-outline my-3 is-filled">
+                                    <label class="form-label">объем</label>
+                                    <input th:value="${item.capacity}" name="capacity" type="number"
+                                           class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6 pt-3 ">
+                                <button th:onclick="|edit(event, '${item.id}')|" class="form-control btn btn-primary">
+                                    Изменить
+                                </button>
+                            </div>
+                        </form>
+
+                        <script>
+                            let form = document.querySelector("form");
+
+                            function edit(event, id) {
+                                event.preventDefault();
+                                const data = new FormData(form);
+                                fetch(`/api/items?id=${id}`, {
+                                    method: "put",
+                                    body: data // for multipart/form-data
+                                })
+                                    .then(x => {
+                                        window.location.href = '/admin'
+                                    });
+                            }
+
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!--   Core JS Files   -->
+<script src="/assets/js/core/popper.min.js"></script>
+<script src="/assets/js/core/bootstrap.min.js"></script>
+<script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
+<script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
+<script>
+    var win = navigator.platform.indexOf('Win') > -1;
+    if (win && document.querySelector('#sidenav-scrollbar')) {
+        var options = {
+            damping: '0.5'
+        }
+        Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+    }
+</script>
+<!-- Github buttons -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="/assets/js/material-dashboard.min.js?v=3.0.4"></script>
 </body>
+
 </html>

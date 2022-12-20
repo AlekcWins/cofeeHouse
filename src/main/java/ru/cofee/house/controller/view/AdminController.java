@@ -12,6 +12,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import ru.cofee.house.controller.api.ItemController;
 import ru.cofee.house.controller.api.OrderController;
 import ru.cofee.house.core.dto.ItemDto;
+import ru.cofee.house.model.Item;
 import ru.cofee.house.model.Order;
 
 import java.util.List;
@@ -48,6 +49,14 @@ public class AdminController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String addProduct(Model model) {
         return "admin/product/add";
+    }
+
+    @GetMapping("/products/edit")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String editProduct(Model model, @RequestParam() long id) {
+        Item item = itemRestController.getItem(id);
+        model.addAttribute("item", item);
+        return "admin/product/edit";
     }
 
     @GetMapping("all_work")

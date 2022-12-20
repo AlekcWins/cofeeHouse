@@ -1,6 +1,5 @@
 package ru.cofee.house.service;
 
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.cofee.house.model.Item;
@@ -23,12 +22,19 @@ public class ItemService {
         repository.deleteById(itemId);
     }
 
-    public Item update(Item item) throws NotFoundException {
-        Optional<Item> find = repository.findById(item.getId());
-        if (find.isPresent()) {
-            return repository.save(item);
-        }
-        throw new NotFoundException("Not found item for save");
+    public Item update(Item item, long id) {
+        return findById(id)
+                .map(x -> {
+                    if (item.getPathImg() != null)
+                        x.setPathImg(item.getPathImg());
+                    x.setCapacity(item.getCapacity());
+                    x.setCost(item.getCost());
+                    x.setName(item.getName());
+                    return repository.save(x);
+                })
+                .orElseThrow(() -> new RuntimeException("Not found item for save"));
+
+
     }
 
     public Item create(Item item) {
@@ -40,7 +46,7 @@ public class ItemService {
     }
 
     public void hideItem(long id) {
-        repository.findById(id)
+        findById(id)
                 .ifPresent(x -> {
                     x.setDeleted(true);
                     repository.save(x);
@@ -48,10 +54,14 @@ public class ItemService {
     }
 
     public void showItem(long id) {
-        repository.findById(id)
+        findById(id)
                 .ifPresent(x -> {
                     x.setDeleted(false);
                     repository.save(x);
                 });
+    }
+
+    public Optional<Item> findById(long id) {
+        return repository.findById(id);
     }
 }

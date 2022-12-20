@@ -111,12 +111,17 @@
 
 
                                     <td class="align-middle">
-                                        <button th:onclick="|hideItem('${item.id}', '${withDeleted}')|" th:if="${!item.isDeleted}"
+                                        <button th:onclick="|hideItem('${item.id}', '${withDeleted}')|"
+                                                th:if="${!item.isDeleted}"
                                                 class="btn btn-warning">Скрывать
                                         </button>
-                                        <button th:onclick="|showItem('${item.id}', '${withDeleted}')|" th:unless="${!item.isDeleted}"
+                                        <button th:onclick="|showItem('${item.id}', '${withDeleted}')|"
+                                                th:unless="${!item.isDeleted}"
                                                 class="btn btn-info">Показывать
                                         </button>
+                                        <a th:href="${'/admin/products/edit?id=' + item.id}"
+                                           class="btn">Изменить
+                                        </a>
                                     </td>
                                 </tr>
                                 </tbody>

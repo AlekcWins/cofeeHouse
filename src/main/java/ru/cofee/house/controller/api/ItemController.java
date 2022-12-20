@@ -34,6 +34,7 @@ import static ru.cofee.house.controller.api.ItemController.API_PATH;
 @Slf4j
 public class ItemController {
     public static final String API_PATH = "api/items";
+    public static final String FILE_IMG_PATH = "static/static/images/items";
     private final CoffeeHouseMapper mapper;
     private final ItemService itemService;
     private final UserDetailsServiceImpl userService;
@@ -51,7 +52,7 @@ public class ItemController {
     public ResponseEntity<ItemDto> createItem(ItemFileDto item) {
         Item mapItem = mapper.map(item, Item.class);
         try {
-            return saveUploadedFile(item.getImg())
+            return saveUploadedFileNewFile(item.getImg())
                     .map(fileName -> {
                         mapItem.setPathImg(fileName);
                         Item createItem = itemService.create(mapItem);
@@ -63,6 +64,31 @@ public class ItemController {
 
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity edit(ItemFileDto item, @RequestParam long id) {
+        Item mapItem = mapper.map(item, Item.class);
+        try {
+            return saveUploadedFile(item.getImg())
+                    .map(fileName -> {
+                        mapItem.setPathImg(fileName);
+                        Item createItem = itemService.update(mapItem, id);
+                        return ResponseEntity.ok(mapper.map(createItem, ItemDto.class));
+                    })
+                    .orElseGet(() -> {
+                                Item createItem = itemService.update(mapItem, id);
+                                return ResponseEntity.ok(mapper.map(createItem, ItemDto.class));
+                            }
+                    );
+
+        } catch (IOException e) {
+
+            return ResponseEntity.badRequest().build();
+        }
+
+
     }
 
     @GetMapping
@@ -88,10 +114,11 @@ public class ItemController {
     }
 
 
-    private Optional<String> saveUploadedFile(MultipartFile file) throws IOException {
+    //todo service
+    private Optional<String> saveUploadedFileNewFile(MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
             byte[] bytes = file.getBytes();
-            Resource resource = new ClassPathResource("static/static/images/items");
+            Resource resource = new ClassPathResource(FILE_IMG_PATH);
             String genFileName = UUID.randomUUID()
                     + file.getOriginalFilename();
             Path path = Paths.get(resource.getFile().getAbsolutePath(), genFileName);
@@ -99,5 +126,23 @@ public class ItemController {
             return Optional.of(genFileName);
         }
         return Optional.empty();
+    }
+
+    //todo service
+    private Optional<String> saveUploadedFile(MultipartFile file) throws IOException {
+        if (!file.isEmpty()) {
+            byte[] bytes = file.getBytes();
+            Resource resource = new ClassPathResource(FILE_IMG_PATH);
+            String genFileName = UUID.randomUUID()
+                    + file.getOriginalFilename();
+            Path path = Paths.get(resource.getFile().getAbsolutePath(), genFileName);
+            Files.write(path, bytes);
+            return Optional.of(genFileName);
+        }
+        return Optional.empty();
+    }
+
+    public Item getItem(long id) {
+        return itemService.findById(id).orElseThrow(() -> new RuntimeException("Not found item"));
     }
 }
