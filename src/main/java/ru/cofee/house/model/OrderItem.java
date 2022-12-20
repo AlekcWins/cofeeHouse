@@ -23,7 +23,7 @@ public class OrderItem {
     @JsonIgnore // todo remove if not nedede and add dto
     private Order order;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "id_item", referencedColumnName = "id")
     private Item item;
 

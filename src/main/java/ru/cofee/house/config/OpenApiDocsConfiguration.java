@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
         scheme = "basic"
 )
 @OpenAPIDefinition(
-        info = @Info(title = "Currency api", version = "v1")
+        info = @Info(title = "coffee house", version = "v1")
 )
 public class OpenApiDocsConfiguration {
 }

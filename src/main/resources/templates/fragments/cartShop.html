@@ -31,10 +31,13 @@
                                                 <div class="col-md-4 quantity">
                                                     <label for="quantity">Количество:</label>
                                                     <input id="quantity" type="number" th:value="${item.count}"
-                                                           class="form-control quantity-input">
+                                                           class="form-control quantity-input count"
+                                                           th:onchange="|onChangeCount(event,'${item.item.id}')|">
                                                 </div>
                                                 <div class="col-md-3 price">
-                                                    <span th:text="${item.item.cost+ ' руб.'}"></span>
+                                                    <span th:text="${item.item.cost+ ' руб.'}" class="cost"></span>
+                                                </div>
+                                                <div class="item-id" style="display:none" th:text=" ${item.item.id}">
                                                 </div>
                                             </div>
                                         </div>
@@ -46,16 +49,110 @@
                     <div class="col-md-12 col-lg-4">
                         <div class="summary">
                             <h3>Стоимость</h3>
-                            <div class="summary-item"><span class="text">Общее</span><span class="price">360 руб.</span>
+                            <div class="summary-item"><span class="text">Общее</span><span
+                                    class="price summ">360 руб.</span>
                             </div>
-                            <div class="summary-item"><span class="text">Скидка</span><span class="price">0 руб.</span>
+                            <div class="summary-item"><span class="text">Скидка</span><span class="price discount">0 руб.</span>
                             </div>
-                            <div class="summary-item"><span class="text">Итого</span><span class="price">360 руб.</span>
+                            <div class="summary-item"><span class="text">Итого</span><span class="price total-summ">360 руб.</span>
                             </div>
                             <button id="confirm" type="button" class="btn btn-primary btn-lg btn-block"
                                     style="width:100%;">
                                 Заказать
                             </button>
+
+
+                            <script>
+                                // king
+                                function calculateSum() {
+                                    let summ = 0;
+                                    const allProducts = document.querySelectorAll(".product");
+                                    allProducts.forEach((item) => {
+                                        const count = item.querySelector(".count").value;
+                                        const cost = item.querySelector(".cost").textContent;
+                                        const countValue = parseInt(count);
+                                        const costValue = parseInt(cost);
+                                        console.log(countValue, costValue);
+                                        summ += countValue * costValue;
+
+                                    });
+                                    console.log(summ);
+                                    let summaryItem = document.querySelector(".summary").querySelector(".summ");
+                                    summaryItem.textContent = summ + " руб.";
+
+                                    const discount = parseInt(document
+                                        .querySelector(".summary")
+                                        .querySelector(".discount")
+                                        .textContent);
+
+                                    const totalSumm = document.querySelector(".summary").querySelector(".total-summ");
+                                    totalSumm.textContent = summ - discount + " руб.";
+                                }
+
+
+                                function onChangeCount(event, id) {
+                                    console.log(id);
+                                    const currentCount = event.target.value;
+                                    if (currentCount < 1) {
+                                        deleteItem(event, id);
+                                    } else {
+                                        updateItem(event, id, currentCount);
+                                    }
+                                }
+
+                                function deleteItem(event, id) {
+                                    fetch(`/order?itemId=${id}`, {
+                                        method: 'DELETE',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                    })
+                                        .then((response) => {
+                                            if (response.ok)
+                                                return response.json()
+                                            throw new Error(response.status);
+                                        })
+                                        .then(x => {
+                                            calculateSum();
+                                            deleteItemFromHTML(id);
+                                        })
+                                        // .catch(x=>  window.location.href = '/items/cart');
+                                }
+
+
+                                function updateItem(event, id, currentCount) {
+                                    fetch(`/order?itemId=${id}&count=${currentCount}`, {
+                                        method: 'PUT',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                    })
+                                        .then((response) => {
+                                            if (response.ok)
+                                                return response.json()
+                                            throw new Error(response.status);
+                                        })
+                                        .then(x => {
+                                            calculateSum();
+                                        })
+                                        // .catch(x=>  window.location.href = '/items/cart');
+
+                                }
+
+                                function deleteItemFromHTML(id) {
+                                    const findElem = Array.from(document.querySelectorAll(".product"))
+                                        .filter((item) => {
+                                            let value = item.querySelector(".item-id").textContent;
+                                            console.log(value)
+                                            console.log(`${value}` === `${id}`)
+                                            return `${value}` === `${id}`;
+                                        });
+                                    findElem[0]?.remove();
+                                    calculateSum();
+                                }
+
+                                calculateSum();
+                            </script>
 
                             <script>
                                 const element = document.querySelector("#confirm");

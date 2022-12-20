@@ -1,6 +1,7 @@
 package ru.cofee.house.service.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -59,5 +60,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public List<UserDto> findAllUsers() {
         return mapper.mapAsList(userRepository.findAll(), UserDto.class);
+    }
+
+    public boolean isIamAdmin(Authentication authentication) {
+        if (authentication != null)
+            return
+                    authentication.getAuthorities().stream()
+                            .anyMatch(grantedAuthority -> {
+                                String authority = grantedAuthority.getAuthority();
+                                return authority
+                                        .equals(Role.ADMIN.getAuthority());
+                            });
+        return false;
     }
 }

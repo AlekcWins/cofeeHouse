@@ -81,6 +81,15 @@ public class OrderService {
         return repository.save(myOrder);
     }
 
+    public Order issueOrder(long orderId) throws NotFoundException {
+        return repository.findById(orderId)
+                .map(o -> {
+                    o.setStatus(Status.ISSUED);
+                    return repository.save(o);
+                })
+                .orElseThrow(() -> new NotFoundException("not found order with id: " + orderId));
+    }
+
     public List<Order> getAllForWork() {
         return repository.findAll().stream()
                 .filter(x -> !x.getStatus().equals(Status.DRAFT) && !x.getStatus().equals(Status.ISSUED))
@@ -91,5 +100,42 @@ public class OrderService {
         return repository.findAll().stream()
                 .filter(x -> x.getStatus().equals(Status.ISSUED))
                 .collect(Collectors.toList());
+    }
+
+    public Order updateOrderItem(String username, long itemId, int count) throws NotFoundException {
+        Order order = findMyDraftOrder(username);
+
+        Optional<OrderItem> findOrderItem = orderItemRepository
+                .findByItemIdAndOrderId(itemId, order.getId());
+
+        if (findOrderItem.isPresent()) {
+            OrderItem orderItem = findOrderItem.get();
+            orderItem.setCount(count);
+            orderItemRepository.save(orderItem);
+            return findMyDraftOrder(username);
+        }
+        throw new NotFoundException("Not found item for save");
+    }
+
+    public Order deleteOrderItem(String username, long itemId) throws NotFoundException {
+        Order order = findMyDraftOrder(username);
+
+        Optional<OrderItem> findOrderItem = orderItemRepository
+                .findByItemIdAndOrderId(itemId, order.getId());
+
+        if (findOrderItem.isPresent()) {
+            OrderItem orderItem = findOrderItem.get();
+            orderItemRepository.delete(orderItem);
+            return findMyDraftOrder(username);
+        }
+        throw new NotFoundException("Not found item for save");
+    }
+
+    public List<Order> getMyActiveOrders(String username) {
+        return getAllForWork().stream().filter(x -> x.getUserName().equals(username)).collect(Collectors.toList());
+    }
+
+    public List<Order> getMyCompleteOrders(String username) {
+        return allComplete().stream().filter(x -> x.getUserName().equals(username)).collect(Collectors.toList());
     }
 }

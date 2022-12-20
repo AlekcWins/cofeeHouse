@@ -81,12 +81,35 @@
                                 </table>
                             </div>
                             <hr class="dark horizontal my-0">
+                            <script>
+                                function issueOrder(id) {
+                                    fetch(`/order/issue?orderId=${id}`, {
+                                        method: 'POST',
+                                        mode: 'no-cors',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                    })
+                                        .then((response) => {
+                                            if (response.ok) {
+                                                window.location.href = '/admin/all_work';
+                                                return response.json()
+                                            }
+                                            throw new Error(response.status);
+                                        })
+                                        .catch((error) => {
+                                            console.log(error);
+                                        });
+                                }
+
+                            </script>
                             <div class="card-footer d-flex  justify-content-between">
-                                <button type="button" class="btn btn-info px-6">Info TODO</button>
-                                <button type="button" class="btn btn-success px-6">Success TODO</button>
+                                <button type="button" class="btn btn-info px-6" style="opacity: 0"></button>
+                                <button type="button" class="btn btn-success px-6"
+                                        th:onclick="|issueOrder('${item.id}')|">Завершить
+                                </button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

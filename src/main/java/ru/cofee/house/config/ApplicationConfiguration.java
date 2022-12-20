@@ -1,4 +1,4 @@
-package ru.cofee.house;
+package ru.cofee.house.config;
 
 
 import io.swagger.v3.oas.models.Components;

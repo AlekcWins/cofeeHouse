@@ -4,10 +4,7 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.cofee.house.model.Order;
 import ru.cofee.house.model.OrderItem;
 import ru.cofee.house.service.OrderService;
@@ -36,12 +33,44 @@ public class OrderController {
         return order;
     }
 
+    //todo param
+    @PostMapping("/issue")
+    public ResponseEntity<Order> issue(long orderId) {
+        try {
+            return ResponseEntity.ok(service.issueOrder(orderId));
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     //todo dto
+    //    todo path param
     @PostMapping
     public ResponseEntity<Order> addOrderItem(Authentication authentication, long itemId) {
-        //todo exception need??
         try {
             return ResponseEntity.ok(service.addOrderItem(authentication.getName(), itemId));
+        } catch (NotFoundException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PutMapping
+    //todo dto
+    //    todo path param
+    public ResponseEntity<Order> updateOrderItem(Authentication authentication, long itemId, int count) {
+        try {
+            return ResponseEntity.ok(service.updateOrderItem(authentication.getName(), itemId, count));
+        } catch (NotFoundException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    //todo dto
+    //    todo path param
+    @DeleteMapping
+    public ResponseEntity<Order> deleteOrderItem(Authentication authentication, long itemId) {
+        try {
+            return ResponseEntity.ok(service.deleteOrderItem(authentication.getName(), itemId));
         } catch (NotFoundException e) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -64,5 +93,13 @@ public class OrderController {
 
     public List<Order> allComplete() {
         return service.allComplete();
+    }
+
+    public List<Order> getMyActiveOrders(Authentication authentication) {
+        return service.getMyActiveOrders(authentication.getName());
+    }
+
+    public List<Order> getMyCompleteOrders(Authentication authentication) {
+        return service.getMyCompleteOrders(authentication.getName());
     }
 }

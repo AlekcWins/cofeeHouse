@@ -21,4 +21,6 @@ public class Item {
     private float cost;
     private String name;
     private String pathImg;
+    private boolean isDeleted;
+
 }

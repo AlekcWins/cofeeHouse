@@ -1,10 +1,12 @@
 package ru.cofee.house.controller.view;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 import ru.cofee.house.controller.api.ItemController;
 import ru.cofee.house.controller.api.OrderController;
@@ -32,9 +34,10 @@ public class AdminController {
     }
 
     @GetMapping("/products")
-    public String products(Model model) {
-        List<ItemDto> items = itemRestController.getItems();
+    public String products(Model model, Authentication authentication, @RequestParam(defaultValue = "false", required = false) boolean withDeleted) {
+        List<ItemDto> items = itemRestController.getItems(authentication, withDeleted);
         model.addAttribute("items", items);
+        model.addAttribute("withDeleted", withDeleted);
         return "admin/products";
     }
 

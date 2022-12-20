@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.cofee.house.controller.api.ItemController;
 import ru.cofee.house.controller.api.OrderController;
 import ru.cofee.house.core.dto.ItemDto;
@@ -26,8 +27,8 @@ public class ItemViewController {
     }
 
     @GetMapping
-    public String getItems(Model model) {
-        List<ItemDto> items = controller.getItems();
+    public String getItems(Model model, Authentication authentication) {
+        List<ItemDto> items = controller.getItems(authentication, false);
         model.addAttribute("items", items);
         return "itemsList";
     }
