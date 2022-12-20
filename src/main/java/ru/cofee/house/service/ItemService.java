@@ -38,4 +38,20 @@ public class ItemService {
     public List<Item> getAll() {
         return repository.findAll();
     }
+
+    public void hideItem(long id) {
+        repository.findById(id)
+                .ifPresent(x -> {
+                    x.setDeleted(true);
+                    repository.save(x);
+                });
+    }
+
+    public void showItem(long id) {
+        repository.findById(id)
+                .ifPresent(x -> {
+                    x.setDeleted(false);
+                    repository.save(x);
+                });
+    }
 }

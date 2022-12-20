@@ -1,6 +1,7 @@
 package ru.cofee.house.controller.view;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +35,7 @@ public class AdminController {
     }
 
     @GetMapping("/products")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String products(Model model, Authentication authentication, @RequestParam(defaultValue = "false", required = false) boolean withDeleted) {
         List<ItemDto> items = itemRestController.getItems(authentication, withDeleted);
         model.addAttribute("items", items);
@@ -43,11 +45,13 @@ public class AdminController {
 
 
     @GetMapping("/products/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String addProduct(Model model) {
         return "admin/product/add";
     }
 
     @GetMapping("all_work")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String allWork(Model model) {
         List<Order> items = orderController.getAllForWork();
         model.addAttribute("items", items);
@@ -55,6 +59,7 @@ public class AdminController {
     }
 
     @GetMapping("all_complete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String allComplete(Model model) {
         List<Order> items = orderController.allComplete();
         model.addAttribute("items", items);

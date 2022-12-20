@@ -3,6 +3,7 @@ package ru.cofee.house.controller.api;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.cofee.house.model.Order;
@@ -86,11 +87,13 @@ public class OrderController {
 
 
     @GetMapping("/all_work")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<Order> getAllForWork() {
         return service.getAllForWork();
     }
 
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<Order> allComplete() {
         return service.allComplete();
     }

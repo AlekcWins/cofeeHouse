@@ -3,6 +3,7 @@ package ru.cofee.house.controller.view;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -75,6 +76,7 @@ public class AuthController {
 
     // handler method to handle list of users
     @GetMapping("/users")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String users(Model model) {
         List<UserDto> users = userService.findAllUsers();
         model.addAttribute("users", users);

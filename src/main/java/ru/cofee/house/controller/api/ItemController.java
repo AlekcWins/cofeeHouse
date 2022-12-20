@@ -7,6 +7,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +46,7 @@ public class ItemController {
 
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ItemDto> createItem(ItemFileDto item) {
         Item mapItem = mapper.map(item, Item.class);
         try {
@@ -70,6 +72,18 @@ public class ItemController {
                 ItemDto.class);
     }
 
+    @PostMapping("hideItem")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void hideItem(long id) {
+        itemService.hideItem(id);
+    }
+
+    @PostMapping("showItem")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void showItem(long id) {
+        itemService.showItem(id);
+    }
+
 
     //todo service
     private String saveUploadedFile(MultipartFile file) throws IOException {
@@ -78,8 +92,7 @@ public class ItemController {
             Resource resource = new ClassPathResource("static/static/images/items");
             String genFileName = UUID.randomUUID()
                     + file.getOriginalFilename();
-            //todo remove /
-            Path path = Paths.get(resource.getFile().getAbsolutePath() + "/" + genFileName);
+            Path path = Paths.get(resource.getFile().getAbsolutePath(), genFileName);
             Files.write(path, bytes);
             return genFileName;
         }

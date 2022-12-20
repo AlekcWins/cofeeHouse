@@ -64,9 +64,58 @@
                                     <td>
                                         <p class="text-center text-sm font-weight-bold mb-0" th:text="${item.cost}"></p>
                                     </td>
+
+                                    <script>
+                                        function hideItem(id, withDeleted) {
+                                            fetch(`/api/items/hideItem?id=${id}`, {
+                                                method: 'POST',
+                                                mode: 'no-cors',
+                                                headers: {
+                                                    'Content-Type': 'application/json'
+                                                },
+                                            })
+                                                .then((response) => {
+                                                    if (response.ok) {
+                                                        window.location.href = `/admin/products?withDeleted=${withDeleted}`
+                                                        return;
+                                                    }
+
+                                                    throw new Error(response.status);
+                                                })
+                                                .catch((error) => {
+                                                    console.log(error);
+                                                });
+                                        }
+
+                                        function showItem(id, withDeleted) {
+                                            fetch(`/api/items/showItem?id=${id}`, {
+                                                method: 'POST',
+                                                mode: 'no-cors',
+                                                headers: {
+                                                    'Content-Type': 'application/json'
+                                                },
+                                            })
+                                                .then((response) => {
+                                                    if (response.ok) {
+                                                        window.location.href = `/admin/products?withDeleted=${withDeleted}`
+                                                        return;
+                                                    }
+
+                                                    throw new Error(response.status);
+                                                })
+                                                .catch((error) => {
+                                                    console.log(error);
+                                                });
+                                        }
+                                    </script>
+
+
                                     <td class="align-middle">
-                                        <button class="btn btn-link text-secondary mb-0">
-                                            <i class="fa fa-ellipsis-v text-xs"></i>
+                                        <button th:onclick="|hideItem('${item.id}', '${withDeleted}')|" th:if="${!item.isDeleted}"
+                                                class="btn btn-warning">Скрывать
+                                        </button>
+                                        <button th:onclick="|showItem('${item.id}', '${withDeleted}')|" th:unless="${!item.isDeleted}"
+                                                class="btn btn-info">Показывать
                                         </button>
                                     </td>
                                 </tr>
