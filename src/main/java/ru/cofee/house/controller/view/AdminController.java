@@ -15,6 +15,7 @@ import ru.cofee.house.core.dto.ItemDto;
 import ru.cofee.house.model.Item;
 import ru.cofee.house.model.Order;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Controller
@@ -65,6 +66,13 @@ public class AdminController {
         List<Order> items = orderController.getAllForWork();
         model.addAttribute("items", items);
         return "admin/order/all_work";
+    }
+    @GetMapping("statistic")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String statistic(Model model) {
+        List<HashMap<String,String>> items = orderController.statistic();
+        model.addAttribute("items", items);
+        return "admin/order/statistic";
     }
 
     @GetMapping("all_complete")
