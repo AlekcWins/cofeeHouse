@@ -35,6 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/iamisadmin",
             "/order/count",
             "/assets/**",
+            "/auditevents/*",
 //            todo
             "/" + API_PATH + "/**"
     };

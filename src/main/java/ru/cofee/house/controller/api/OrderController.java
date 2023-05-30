@@ -80,6 +80,7 @@ public class OrderController {
     }
 
     @GetMapping("/count")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public int getMyOrderCount(Authentication authentication) {
         return service.findMyDraftOrder(authentication.getName()).getItems()
                 .stream()
