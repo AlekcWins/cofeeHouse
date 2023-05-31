@@ -31,7 +31,7 @@
                 <!--                </li>-->
             </ul>
             <div class="d-flex justify-content-between ">
-                <form class="d-flex shop-cart d-none">
+                <form id="ItemsCart" style="display:none" class="d-flex shop-cart d-none">
                     <a class="btn btn-outline-dark" href="/items/cart">
                         <i class="bi-cart-fill me-1"></i>
                         Cart
@@ -49,11 +49,13 @@
     </div>
     <script>
         function displayAdminPanel() {
-            document.querySelector('#admin').style.display = 'block';
+            document.querySelector('#admin').style.setProperty('display', 'block', 'important');
+            document.querySelector('#ItemsCart').style.setProperty('display', 'none', 'important');;
+
         }
 
         function hideAdminPanel() {
-            document.querySelector('#admin').style.display = 'none';
+            document.querySelector('#admin').style.setProperty('display', 'none', 'important');
         }
 
         function _updateCartCountItem(count) {
@@ -76,37 +78,40 @@
                 .then((data) => {
                     console.log('Success:', data);
                     displayAuthorize();
+                    fetch("/iamisadmin", {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then((response) => {
+                            if (response.ok)
+                                return response.json()
+                            throw new Error(response.status);
+                        })
+                        .then((data) => {
+                            console.log('Success:', data);
+                            if (data.isAdmin) {
+                                displayAdminPanel();
+                                console.log('YOU ARE ADMIN')
+                            } else {
+                                hideAdminPanel();
+                                document.querySelector('.shop-cart').style.setProperty("display", "block", "important");
+                                fetchCountCartItems()
+                            }
+                        })
+                        .catch((error) => {
+                            console.log(error);
+                            hideAdminPanel();
+                        });
                 })
                 .catch((error) => {
                     console.log(error);
                     displayNoneAuthorize();
                 });
 
-            fetch("/iamisadmin", {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then((response) => {
-                    if (response.ok)
-                        return response.json()
-                    throw new Error(response.status);
-                })
-                .then((data) => {
-                    console.log('Success:', data);
-                    if (data.isAdmin) {
-                        displayAdminPanel();
-                        console.log('YOU ARE ADMIN')
-                    } else {
-                        hideAdminPanel();
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                    hideAdminPanel();
-                });
 
-            fetchCountCartItems()
+
+
         }
 
         function fetchCountCartItems() {
@@ -139,7 +144,6 @@
             hideAllNavButton();
             const navButtons = document.querySelector(".nav__buttons");
             navButtons.querySelector('.logout').style.setProperty("display", "block", "important");
-            document.querySelector('.shop-cart').style.setProperty("display", "block", "important");
         }
 
         function displayNoneAuthorize() {
@@ -147,6 +151,7 @@
             const navButtons = document.querySelector(".nav__buttons");
             navButtons.querySelector('.login').style.setProperty("display", "block", "important");
             navButtons.querySelector('.register').style.setProperty("display", "block", "important");
+            document.querySelector('.shop-cart').style.setProperty("display", "none", "important");
         }
 
         document.addEventListener("DOMContentLoaded", whenDocReady);
