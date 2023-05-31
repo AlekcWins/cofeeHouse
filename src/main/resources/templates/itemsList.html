@@ -51,7 +51,15 @@
         return Number.parseInt(document.querySelector("#countItemsCart").textContent);
     }
 </script>
+<script>
+    function like() {
+    let count = 0;
+    const numberElem = document.getElementById('number');
+        count=count+1;
+        numberElem.textContent = count;
+    }
 
+</script>
 <!-- Section-->
 <section class="py-5">
     <div class="container px- px-lg-5 mt-5">
@@ -89,6 +97,11 @@
                                 th:onclick="|payItem('${item.id}')|"
                         >Купить
                         </button>
+                        <button class="text-center btn btn-outline-dark mt-auto"
+                                th:onclick="like()"
+                        >♡
+                        </button>
+                        <p><span id="number">0</span></p>
                     </div>
                 </div>
             </div>

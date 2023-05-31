@@ -10,6 +10,8 @@ import ru.cofee.house.model.Order;
 import ru.cofee.house.model.OrderItem;
 import ru.cofee.house.service.OrderService;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -78,6 +80,7 @@ public class OrderController {
     }
 
     @GetMapping("/count")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public int getMyOrderCount(Authentication authentication) {
         return service.findMyDraftOrder(authentication.getName()).getItems()
                 .stream()
@@ -92,6 +95,19 @@ public class OrderController {
         return service.getAllForWork();
     }
 
+    @GetMapping("/statistic")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public List<HashMap<String,String>> statistic() {
+        List<HashMap<String,String>> list = new ArrayList<>();
+        list.add(new HashMap<>(){{
+            put("id","1");
+            put("oldCost","400");
+            put("newCost","450");
+            put("idItem","3");
+            put("date","16/05/2023");
+        }});
+        return list;
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<Order> allComplete() {

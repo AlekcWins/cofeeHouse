@@ -29,4 +29,8 @@ logging:
       springframework:
         web: DEBUG
       hibernate: DEBUG
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,env,auditevents

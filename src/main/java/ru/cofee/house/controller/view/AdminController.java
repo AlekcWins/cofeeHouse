@@ -1,6 +1,7 @@
 package ru.cofee.house.controller.view;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -12,10 +13,15 @@ import org.springframework.web.servlet.view.RedirectView;
 import ru.cofee.house.controller.api.ItemController;
 import ru.cofee.house.controller.api.OrderController;
 import ru.cofee.house.core.dto.ItemDto;
+import ru.cofee.house.model.AuditItem;
 import ru.cofee.house.model.Item;
 import ru.cofee.house.model.Order;
+import ru.cofee.house.repository.AuditLogRepository;
 
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
@@ -23,11 +29,15 @@ public class AdminController {
 
     private final ItemController itemRestController;
     private final OrderController orderController;
+    private final AuditLogRepository repository;
 
     @Autowired
-    public AdminController(ItemController itemRestController, OrderController orderController) {
+    public AdminController(ItemController itemRestController,
+                           OrderController orderController,
+                           AuditLogRepository repository) {
         this.itemRestController = itemRestController;
         this.orderController = orderController;
+        this.repository = repository;
     }
 
     @GetMapping
@@ -67,6 +77,14 @@ public class AdminController {
         return "admin/order/all_work";
     }
 
+    @GetMapping("statistic")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String statistic(Model model) {
+        List<HashMap<String, String>> items = orderController.statistic();
+        model.addAttribute("items", items);
+        return "admin/order/statistic";
+    }
+
     @GetMapping("all_complete")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String allComplete(Model model) {
@@ -75,5 +93,15 @@ public class AdminController {
         return "admin/order/all_complete";
     }
 
+    @GetMapping("audit_log")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public String auditLog(Model model) {
+        List<AuditItem> auditEvents = repository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(AuditItem::getTimestamp).reversed())
+                .collect(Collectors.toList());
+        model.addAttribute("items", auditEvents);
+        return "admin/audit_log";
+    }
 
 }
